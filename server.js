@@ -1,29 +1,42 @@
-// server.js
 const express = require("express");
 const cors = require("cors");
-const app = express();
+const fs = require("fs");
+const path = require("path");
 
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-let locations = []; // Bellekte tutulan veriler (test için)
+// Konum verileri RAM + dosyada saklansın
+let locations = [];
 
-// Konum POST et
+// API endpointleri
 app.post("/api/location", (req, res) => {
   const { lat, lon } = req.body;
   if (lat && lon) {
-    locations.push({ lat, lon, timestamp: Date.now() });
-    console.log("Yeni konum:", lat, lon);
+    const entry = { lat, lon, timestamp: Date.now() };
+    locations.push(entry);
+
+    fs.writeFileSync("locations.json", JSON.stringify(locations, null, 2));
+
+    console.log("Yeni konum:", entry);
     res.status(200).json({ message: "Konum kaydedildi" });
   } else {
     res.status(400).json({ error: "Eksik veri" });
   }
 });
 
-// Konumları GET et
 app.get("/api/location", (req, res) => {
   res.json(locations);
 });
 
-const PORT = 3000;
-app.listen(PORT, () => console.log(`✅ Server http://localhost:${PORT} üzerinde çalışıyor`));
+// Public klasörünü servis et
+app.use(express.static(path.join(__dirname, "public")));
+
+// Herhangi bir bilinmeyen route → index.html dönsün
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`✅ Server ${PORT} portunda çalışıyor`));
