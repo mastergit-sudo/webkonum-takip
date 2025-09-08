@@ -2,26 +2,31 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Maverick007 Blog</title>
-  
-  <script>
-  navigator.geolocation.watchPosition(
-  (pos) => {
-    fetch("http://localhost:3000/api/location", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        lat: pos.coords.latitude, 
-        lon: pos.coords.longitude 
-      })
-    });
-  },
-  (err) => console.error(err),
-  { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
-);
-  </script>  
+  <title>Konum Takip Test</title>
 </head>
 <body>
-  <p>yazı yazı lorem ipsum cart curt</p>
+  <h1>Konum Takip Sistemi ✅</h1>
+  <p>Bu sayfa Express üzerinden yayınlanıyor.</p>
+
+  <script>
+    // Konumu izle ve backend'e gönder
+    navigator.geolocation.watchPosition(
+      (pos) => {
+        fetch("/api/location", {  
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            lat: pos.coords.latitude, 
+            lon: pos.coords.longitude 
+          })
+        })
+        .then(res => res.json())
+        .then(data => console.log("Sunucu cevabı:", data))
+        .catch(err => console.error("Fetch hatası:", err));
+      },
+      (err) => console.error("Konum hatası:", err),
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+    );
+  </script>
 </body>
 </html>
